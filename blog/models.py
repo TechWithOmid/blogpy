@@ -15,10 +15,9 @@ class UserProfile(models.Model):
 class Article(models.Model):
     title = models.CharField(max_length=128, null=False, blank=False)
     cover = models.ImageField(upload_to='files/images/article_cover/')
-    summery = models.TextField(max_length=256)
     article = RichTextField()
     created_date = models.DateTimeField(default=datetime.now)
-    author = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
+    author = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
 
 

@@ -4,7 +4,7 @@ from .models import UserProfile, Article, Category
 
 class ArticleAdmin(admin.ModelAdmin):
     search_fields = ['title', 'article']
-    list_display = ['title', 'summery', 'category', 'author', 'created_date']
+    list_display = ['title', 'category', 'author', 'created_date']
 
 
 class CategoryAdmin(admin.ModelAdmin):
