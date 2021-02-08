@@ -129,7 +129,7 @@
                     <div class="item-entry" data-aos="zoom-in">
                         <div class="item-entry__thumb">
                             <a href="single-standard.html" class="item-entry__thumb-link">
-                                <img src="{{ article.cover }}">
+                                <img src="{{ article.cover.url }}">
                             </a>
                         </div>
 
@@ -159,14 +159,17 @@
             <div class="col-full">
                 <nav class="pgn" data-aos="fade-up">
                     <ul>
-{#                        <li><a class="pgn__prev" href="#0">قبل</a></li>#}
-{#                        <li><a class="pgn__num" href="#0">۱</a></li>#}
-{#                        <li><span class="pgn__num current">۲</span></li>#}
-{#                        <li><a class="pgn__num" href="#0">۳</a></li>#}
-{#                        <li><a class="pgn__num" href="#0">۴</a></li>#}
-{#                        <li><a class="pgn__num" href="#0">۵</a></li>#}
-{#                        <li><span class="pgn__num dots">…</span></li>#}
-{#                        <li><a class="pgn__num" href="#0">۸</a></li>#}
+                        {% if page_obj.has_previous %}
+                        <li><a class="pgn__prev" href="?page={{ page_obj.previous_page_number }}">قبل</a></li>
+                        {% endif %}
+
+                        {% for page in paginator.page_range %}
+                        <li><a class="pgn__num" href="?page={{ page }}">{{ page }}</a></li>
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                        <li><a class="pgn__next" href="?page={{ page_obj.next_page_number }}">بعد</a></li>
+                        {% endif %}
                     </ul>
                 </nav>
             </div>

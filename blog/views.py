@@ -10,14 +10,9 @@ class IndexPage(TemplateView):
         # all articles
         article_data = []
         all_article = Article.objects.all().order_by('-created_date')
-        for article in all_article:
-            article_data.append({
-                'title': article.title,
-                'cover': article.cover.url,
-                'author': article.author,
-                'created_date': article.created_date,
-                'category': article.category,
-            })
+        paginator = Paginator(all_article, 6)
+        page_number = request.GET.get('page', 1)
+        page_obj = paginator.get_page(page_number)
 
         # promoted articles
         promote_data = []
@@ -33,8 +28,10 @@ class IndexPage(TemplateView):
             })
 
         context = {
-            'article_data': article_data,
+            'article_data': page_obj.object_list,
             'promote_data': promote_data,
+            'paginator': paginator,
+            'page_obj': page_obj
         }
 
         return render(request, 'index.html', context)
