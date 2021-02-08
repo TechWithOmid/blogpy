@@ -4,7 +4,9 @@ from .models import UserProfile, Article, Category
 
 class ArticleAdmin(admin.ModelAdmin):
     search_fields = ['title', 'article']
-    list_display = ['title', 'category', 'author', 'created_date']
+    ordering = ['-created_date']
+    list_filter = ('category', 'created_date', 'author')
+    list_display = ['promote',  'created_date', 'category', 'author', 'title']
 
 
 class CategoryAdmin(admin.ModelAdmin):
