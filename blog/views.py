@@ -86,3 +86,28 @@ class SingleArticleAPIView(APIView):
             return Response({'status': 'Internal Server Error, we\'l Check it Later'},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+class SearchArticleAPIView(APIView):
+    def get(self, request, format=None):
+        try:
+            from django.db.models import Q
+
+            query = request.GET['query']
+            article = Article.objects.filter(Q(content__icontains=query))
+            data = []
+
+            for article in article:
+                data.append({
+                    'title': article.title,
+                    'cover': article.cover.url,
+                    'content': article.content,
+                    'created_date': article.created_date,
+                    'author': article.author.name,
+                    'category': article.category.title,
+                })
+                
+            return Response({'data': data}, status=status.HTTP_200_OK)
+
+        except:
+            return Response({'status': 'Internal Server Error, we\'l Check it Later'},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)

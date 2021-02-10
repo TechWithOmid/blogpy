@@ -23,8 +23,8 @@ class Article(models.Model):
     )
 
     title = models.CharField(max_length=128, null=False, blank=False, verbose_name='عنوان')
-    cover = models.ImageField(upload_to='files/images/article_cover/')
-    content = RichTextField()
+    cover = models.ImageField(upload_to='files/images/article_cover/', verbose_name="عکس مقاله")
+    content = RichTextField(verbose_name="متن مقاله")
     created_date = models.DateTimeField(default=datetime.now, verbose_name='تاریخ')
     author = models.ForeignKey(UserProfile, on_delete=models.CASCADE, verbose_name='نویسنده')
     category = models.ForeignKey('Category', on_delete=models.CASCADE, verbose_name='دسته')
