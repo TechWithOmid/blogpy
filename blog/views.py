@@ -128,7 +128,7 @@ class SubmitArticleAPIView(APIView):
                 author_id = serializer.data.get('author_id')
                 promote = serializer.data.get('promote')
             else:
-                return Response({'status': 'Bad Request'}, status=status.HTTP_200_OK)
+                return Response({'status': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
 
             user = User.objects.get(id=author_id)
             print(user)
@@ -159,13 +159,32 @@ class UpdateArticleCoverAPIView(APIView):
     def post(self, request, format=None):
         try:
             serializer = serializers.UpdateCoverSerializer(data=request.data)
+
             if serializer.is_valid():
                 article_id = serializer.data.get('article_id')
                 cover = request.FILES['cover']
             else:
-                return Response({'status': 'Bad Request.'}, status=status.HTTP_200_OK)
+                return Response({'status': 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
 
             Article.objects.filter(id=article_id).update(cover=cover)
+            return Response({'status': 'OK'}, status=status.HTTP_200_OK)
+
+        except:
+            return Response({'status': 'Internal Server Error.'},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class DeleteArticleAPIView(APIView):
+
+    def post(self, request, format=None):
+        try:
+            serializer = serializers.DeleteArticleSerializer(data=request.data)
+            if serializer.is_valid():
+                article_id = serializer.data.get('article_id')
+            else:
+                return Response({'status': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
+
+            Article.objects.filter(id=article_id).delete()
+
             return Response({'status': 'OK'}, status=status.HTTP_200_OK)
 
         except:

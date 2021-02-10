@@ -29,7 +29,7 @@ class Article(models.Model):
     author = models.ForeignKey(UserProfile, on_delete=models.CASCADE, verbose_name='نویسنده')
     category = models.ForeignKey('Category', on_delete=models.CASCADE, verbose_name='دسته')
     publish_status = models.CharField(max_length=1, choices=publish_choices, null=False,
-                                      blank=False,default='d')
+                                      blank=False, default='d')
     promote = models.BooleanField(default=False, editable=True, verbose_name='اسلایدر')
 
     class Meta:
