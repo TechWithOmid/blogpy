@@ -5,21 +5,21 @@ from .models import Article
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from . import serializers
 
 
 class IndexPage(TemplateView):
 
     def get(self, request, **kwargs):
         # all articles
-        article_data = []
-        all_article = Article.objects.all().order_by('-created_date')
+        all_article = Article.objects.filter(publish_status='p').order_by('-created_date')
         paginator = Paginator(all_article, 6)
         page_number = request.GET.get('page', 1)
         page_obj = paginator.get_page(page_number)
 
         # promoted articles
         promote_data = []
-        promoted_articles = Article.objects.filter(promote=True)
+        promoted_articles = Article.objects.filter(promote=True, publish_status='p')
         for promoted_article in promoted_articles:
             promote_data.append({
                 'title': promoted_article.title,
@@ -49,18 +49,19 @@ class AboutPage(TemplateView):
 
 
 class AllArticleAPIView(APIView):
-    def get(self):
+
+    def get(self, request, format=None):
         try:
-            all_articles = Article.objects.all().order_by('-created_at')[:10]
+            all_articles = Article.objects.filter(publish_status='p').order_by('-created_date')[:6]
             data = []
             for article in all_articles:
                 data.append({
                     'title': article.title,
                     'cover': article.cover.url,
                     'content': article.content,
+                    'author': article.author.name,
                     'created_date': article.created_date,
-                    'author': article.author,
-                    'category': article.category,
+                    'category': article.category.title,
                     'promote': article.promote,
                 })
             return Response({'data': data}, status=status.HTTP_200_OK)
@@ -68,3 +69,20 @@ class AllArticleAPIView(APIView):
         except:
             return Response({'status': 'Internal Server Error, we\'ll Check it Later'},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class SingleArticleAPIView(APIView):
+    def get(self, request, format=None):
+        try:
+            article__title = request.GET['article_title']
+            article = Article.objects.filter(title__contains=article__title)
+
+            serialized_data = serializers.SingleArticleSerializer(article, many=True)
+            data = serialized_data.data
+
+            return Response({'data': data}, status=status.HTTP_200_OK)
+
+        except:
+            return Response({'status': 'Internal Server Error, we\'l Check it Later'},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+

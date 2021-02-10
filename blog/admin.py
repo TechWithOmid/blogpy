@@ -6,8 +6,8 @@ class ArticleAdmin(admin.ModelAdmin):
     search_fields = ['title', 'article']
     ordering = ['-created_date']
     list_filter = ('category', 'created_date', 'author')
-    list_editable = ['promote']
-    list_display = ['title',  'author', 'category', 'created_date', 'promote']
+    list_editable = ['promote', 'publish_status']
+    list_display = ['title',  'author', 'category', 'created_date', 'publish_status', 'promote']
 
 
 class CategoryAdmin(admin.ModelAdmin):

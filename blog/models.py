@@ -17,12 +17,19 @@ class UserProfile(models.Model):
 
 
 class Article(models.Model):
+    publish_choices = (
+        ('p', 'انتشار'),
+        ('d', 'پیش نویس'),
+    )
+
     title = models.CharField(max_length=128, null=False, blank=False, verbose_name='عنوان')
     cover = models.ImageField(upload_to='files/images/article_cover/')
     content = RichTextField()
     created_date = models.DateTimeField(default=datetime.now, verbose_name='تاریخ')
     author = models.ForeignKey(UserProfile, on_delete=models.CASCADE, verbose_name='نویسنده')
     category = models.ForeignKey('Category', on_delete=models.CASCADE, verbose_name='دسته')
+    publish_status = models.CharField(max_length=1, choices=publish_choices, null=False,
+                                      blank=False,default='d')
     promote = models.BooleanField(default=False, editable=True, verbose_name='اسلایدر')
 
     class Meta:
