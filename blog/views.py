@@ -1,11 +1,12 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.core.paginator import Paginator
-from .models import Article
+from .models import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from . import serializers
+from django.contrib.auth.models import  User
 
 
 class IndexPage(TemplateView):
@@ -73,6 +74,7 @@ class AllArticleAPIView(APIView):
 
 class SingleArticleAPIView(APIView):
     def get(self, request, format=None):
+
         try:
             article__title = request.GET['article_title']
             article = Article.objects.filter(title__contains=article__title)
@@ -105,9 +107,48 @@ class SearchArticleAPIView(APIView):
                     'author': article.author.name,
                     'category': article.category.title,
                 })
-                
+
             return Response({'data': data}, status=status.HTTP_200_OK)
 
         except:
             return Response({'status': 'Internal Server Error, we\'l Check it Later'},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class SubmitArticleAPIView(APIView):
+
+    def post(self, request, format=None):
+        try:
+            serializer = serializers.SubmitArticleSerializer(data=request.data)
+            if serializer.is_valid():
+                title = serializer.data.get('title')
+                cover = request.FILES['cover']
+                content = serializer.data.get('content')
+                category_id = serializer.data.get('category_id')
+                author_id = serializer.data.get('author_id')
+                promote = serializer.data.get('promote')
+            else:
+                return Response({'status': 'Bad Request'}, status=status.HTTP_200_OK)
+
+            user = User.objects.get(id=author_id)
+            print(user)
+            author = UserProfile.objects.get(name=user)
+
+            category = Category.objects.get(id=category_id)
+            # print(category)
+
+            article = Article()
+            article.title = title
+            print(article.title)
+            article.cover = cover
+            article.content = content
+            article.category = category
+            article.author = author
+            article.promote = promote
+            article.save()
+
+            return Response({'status': 'OK'}, status=status.HTTP_200_OK)
+
+        except:
+            return Response({'status': 'Internal Server Error.'},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
